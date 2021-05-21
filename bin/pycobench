@@ -72,9 +72,6 @@ TIMEOUT_TIMEOUT_RETCODE = 124
 # limit on the size of an output on stdout and stderr
 OUTPUT_LIMIT = 16384
 
-# delimiter for time: min<delim>sec
-TIME_DELIMITER = '.'
-
 # delimiter for EOL
 g_newline_sep = "###"
 
@@ -303,7 +300,6 @@ christian]).
         str_stderr = remove_newlines(result['stderr'])
         status = 'finished'
         time_str = str(result['time'])
-        time_str = time_str.replace('.', TIME_DELIMITER)
 
         res_string = termcolor.colored('FINISHED', 'green')
         res_string += f'\tResult: {result["retcode"]}\tTime: {time_str}'
@@ -425,7 +421,7 @@ Runs the main program according to the arguments obtained from the parser.
         #         for k in g_cmd_dict:
         #             list_of_tasks.append({'method': k, 'params': line})
 
-        reader = csv.reader(sys.stdin, delimiter=';')
+        reader = csv.reader(args.input, delimiter=';')
         for line in reader:
             for k in g_cmd_dict:
                 list_of_tasks.append({'method': k, 'params': line})
@@ -486,13 +482,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
                 description="pycobench - "
                 "Executes benchmarks given using a configuration file on "
-                "cases given on the standard input")
-    parser.add_argument('conf', metavar='file.conf', nargs=1,
-                        help='configuration file (in YAML)')
+                "cases given in input")
     parser.add_argument('-j', '--jobs', type=int, default=os.cpu_count(),
                         help='The number of jobs (workers) to run '
                         'concurrently (default: %(default)s)')
-    parser.add_argument('-c', '--continue', metavar='TASKLIST',
+    parser.add_argument('-f', '--finish', metavar='TASKLIST',
                         dest='tasklist',
                         help='''Specifying this argument continues execution "
                         "of unfinished tasks from %(metavar)s. "
@@ -509,6 +503,11 @@ if __name__ == '__main__':
                         "execute, separated by ';' (default: all)")
     parser.add_argument('-v', '--verbose', action="store_true",
                         help="verbose output")
+    parser.add_argument('-c', '--conf', metavar='config.yaml', nargs=1, required=True,
+                        help='configuration file (in YAML)')
+    parser.add_argument('input', nargs="?",
+                        help="input file with the tasks in CSV (default: %(default)s)",
+                        type=argparse.FileType('r'), default=sys.stdin)
 
     args = parser.parse_args()
     run_main(args)
