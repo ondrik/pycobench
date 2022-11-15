@@ -14,7 +14,7 @@
 #     * The configuration file is a YAML where each engine is given a command
 #       to run (with $1, $2, $3,... denoting input parameters).
 #   * Benchmarks are provided on standard input, one per line.  Each line
-#     contains a whitespace-separated list of parameters (which are then input
+#     contains a semicolon-separated list of parameters (which are then input
 #     into the engine commands in the place of $1, $2, $3, ...)
 #   * The tasks to be run are written into a file and results of finished tasks
 #     are appended to the file as well.
